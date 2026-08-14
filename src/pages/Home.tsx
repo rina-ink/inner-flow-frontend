@@ -4,6 +4,7 @@ import FloatingLayer from "../components/motion/FloatingLayer";
 import ScrollFlowLine from "../components/motion/ScrollFlowLine";
 import ScrollReveal from "../components/motion/ScrollReveal";
 import FlowJourney from "../components/home/FlowJourney";
+import MassagePreview from "../components/home/MassagePreview";
 
 function Home() {
     return (
@@ -105,7 +106,8 @@ function Home() {
                 ------------------------- */}
 
                 <FlowJourney />
-                
+                <MassagePreview />
+
             </main>
         </>
     );

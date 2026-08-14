@@ -270,3 +270,216 @@ button {
     transform: scale(1.05);
   }
 }
+
+
+/* -------------------------
+    MASSAGE ILLUSTRATIONS
+------------------------- */
+
+.massage-illustration {
+  position: relative;
+  width: 14rem;
+  height: 9rem;
+
+  transition:
+    transform 900ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 700ms ease;
+}
+
+.group:hover .massage-illustration {
+  transform: scale(1.04);
+}
+
+
+/* -------------------------
+    RELAXATION
+    wide / soft / breathing
+------------------------- */
+
+.massage-illustration-relaxation-flow {
+  width: 13rem;
+  height: 7rem;
+
+  border: 1px solid var(--accent);
+  border-radius: 48% 52% 46% 54% / 55% 45% 55% 45%;
+
+  opacity: 0.35;
+
+  animation:
+    massage-relaxation 10s ease-in-out infinite;
+}
+
+@keyframes massage-relaxation {
+  0%,
+  100% {
+    transform: scale(0.96, 1);
+  }
+
+  50% {
+    transform: scale(1.05, 0.96);
+  }
+}
+
+
+/* -------------------------
+    DEEP TISSUE
+    compression / release
+------------------------- */
+
+.massage-illustration-deep-tissue-flow::before,
+.massage-illustration-deep-tissue-flow::after {
+  content: "";
+
+  position: absolute;
+  left: 50%;
+
+  width: 10rem;
+  height: 3.5rem;
+
+  border: 1px solid var(--accent);
+  border-radius: 50%;
+
+  opacity: 0.38;
+
+  transform: translateX(-50%);
+}
+
+.massage-illustration-deep-tissue-flow::before {
+  top: 1.4rem;
+
+  animation:
+    tissue-upper 9s ease-in-out infinite;
+}
+
+.massage-illustration-deep-tissue-flow::after {
+  bottom: 1.4rem;
+
+  animation:
+    tissue-lower 9s ease-in-out infinite;
+}
+
+@keyframes tissue-upper {
+  0%,
+  100% {
+    transform:
+      translateX(-50%)
+      translateY(-5px)
+      scaleX(1);
+  }
+
+  50% {
+    transform:
+      translateX(-50%)
+      translateY(5px)
+      scaleX(0.9);
+  }
+}
+
+@keyframes tissue-lower {
+  0%,
+  100% {
+    transform:
+      translateX(-50%)
+      translateY(5px)
+      scaleX(1);
+  }
+
+  50% {
+    transform:
+      translateX(-50%)
+      translateY(-5px)
+      scaleX(0.9);
+  }
+}
+
+
+/* -------------------------
+    BACK / NECK
+    concentrated movement
+------------------------- */
+
+.massage-illustration-back-neck-flow::before {
+  content: "";
+
+  position: absolute;
+  left: 50%;
+  top: 50%;
+
+  width: 5rem;
+  height: 8rem;
+
+  border-left: 1px solid var(--accent);
+  border-right: 1px solid var(--accent);
+
+  border-radius: 50%;
+
+  opacity: 0.38;
+
+  transform:
+    translate(-50%, -50%)
+    rotate(8deg);
+
+  animation:
+    back-neck-flow 11s ease-in-out infinite;
+}
+
+@keyframes back-neck-flow {
+  0%,
+  100% {
+    transform:
+      translate(-50%, -50%)
+      rotate(5deg)
+      scaleY(0.95);
+  }
+
+  50% {
+    transform:
+      translate(-50%, -50%)
+      rotate(-4deg)
+      scaleY(1.05);
+  }
+}
+
+
+/* -------------------------
+    FULL BODY
+    long continuous movement
+------------------------- */
+
+.massage-illustration-full-body-flow::before {
+  content: "";
+
+  position: absolute;
+  left: 0;
+  top: 50%;
+
+  width: 100%;
+  height: 4rem;
+
+  border-top: 1px solid var(--accent);
+  border-radius: 50%;
+
+  opacity: 0.4;
+
+  transform: rotate(-5deg);
+
+  animation:
+    full-body-flow 12s ease-in-out infinite;
+}
+
+@keyframes full-body-flow {
+  0%,
+  100% {
+    transform:
+      translateX(-5px)
+      rotate(-5deg)
+      scaleX(0.95);
+  }
+
+  50% {
+    transform:
+      translateX(8px)
+      rotate(3deg)
+      scaleX(1.05);
+  }
+}
