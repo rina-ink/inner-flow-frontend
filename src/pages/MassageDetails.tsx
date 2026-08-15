@@ -95,7 +95,7 @@ function MassageDetails() {
                 <div className="mt-20 grid gap-16 md:grid-cols-2">
                     {/* VISUAL */}
 
-                    <div className="flex min-h-[28rem] items-center justify-center">
+                    <div className="flex min-h-112 items-center justify-center">
                         <div
                             className={`massage-illustration massage-illustration-${massage.illustrationKey}`}
                             aria-hidden="true"
