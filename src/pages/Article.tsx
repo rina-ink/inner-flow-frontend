@@ -4,6 +4,7 @@ import { Link, useParams } from "react-router";
 import Header from "../components/layout/Header";
 import ScrollReveal from "../components/motion/ScrollReveal";
 import { getBlogPostBySlug } from "../services/blog";
+import ArticleMark from "../components/journal/ArticleMark";
 
 import type { BlogPost } from "../types/blog";
 
@@ -143,20 +144,26 @@ function Article() {
 
                     <ScrollReveal delay={100}>
                         <header className="mt-16 border-b border-current/10 pb-16">
-                            <p
-                                className="mb-5 text-xs uppercase tracking-[0.35em]"
-                                style={{
-                                    color:
-                                        "var(--accent)",
-                                }}
-                            >
-                                {post.category ||
-                                    "journal"}
-                            </p>
+                            <div className="grid items-start gap-10 md:grid-cols-[1fr_auto]">
+                                <div>
+                                    <p
+                                        className="mb-5 text-xs uppercase tracking-[0.35em]"
+                                        style={{
+                                            color: "var(--accent)",
+                                        }}
+                                    >
+                                        {post.category || "journal"}
+                                    </p>
 
-                            <h1 className="max-w-3xl text-4xl font-light leading-tight md:text-6xl">
-                                {post.title}
-                            </h1>
+                                    <h1 className="max-w-3xl text-4xl font-light leading-tight md:text-6xl">
+                                        {post.title}
+                                    </h1>
+                                </div>
+
+                                <div className="hidden md:block">
+                                    <ArticleMark />
+                                </div>
+                            </div>
 
                             <p
                                 className="mt-7 max-w-2xl text-lg leading-8"

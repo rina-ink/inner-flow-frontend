@@ -4,6 +4,7 @@ import { Link } from "react-router";
 import Header from "../components/layout/Header";
 import ScrollReveal from "../components/motion/ScrollReveal";
 import { getBlogPosts } from "../services/blog";
+import JournalFlow from "../components/journal/JournalFlow";
 
 import type { BlogPostSummary } from "../types/blog";
 
@@ -51,22 +52,28 @@ function Journal() {
             >
                 <div className="mx-auto max-w-6xl">
                     <ScrollReveal>
-                        <div className="mb-24 max-w-3xl">
-                            <p
-                                className="mb-4 text-xs uppercase tracking-[0.35em]"
-                                style={{
-                                    color:
-                                        "var(--accent)",
-                                }}
-                            >
-                                journal
-                            </p>
+                        <div className="relative mb-24 grid items-center gap-12 md:grid-cols-[1fr_auto]">
+                            <div className="max-w-3xl">
+                                <p
+                                    className="mb-4 text-xs uppercase tracking-[0.35em]"
+                                    style={{
+                                        color:
+                                            "var(--accent)",
+                                    }}
+                                >
+                                    journal
+                                </p>
 
-                            <h1 className="text-3xl font-light leading-tight md:text-5xl">
-                                Notes on body,
-                                <br />
-                                touch and movement.
-                            </h1>
+                                <h1 className="text-3xl font-light leading-tight md:text-5xl">
+                                    Notes on body,
+                                    <br />
+                                    touch and movement.
+                                </h1>
+                            </div>
+
+                            <div className="hidden md:block">
+                                <JournalFlow />
+                            </div>
                         </div>
                     </ScrollReveal>
 
