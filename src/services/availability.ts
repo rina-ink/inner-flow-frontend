@@ -18,3 +18,23 @@ export async function getAvailabilityByDate(
 
     return data as EffectiveAvailability;
 }
+
+export async function getAvailableSlots(
+    date: string,
+    duration: number,
+): Promise<string[]> {
+    const response = await fetch(
+        `${API_URL}/api/availability/slots?date=${date}&duration=${duration}`,
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(
+            data.message ||
+                "Could not load available times.",
+        );
+    }
+
+    return data.slots;
+}

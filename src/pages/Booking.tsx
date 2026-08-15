@@ -7,7 +7,10 @@ import {
     getMassageBySlug,
     getMassages,
 } from "../services/massages";
-import { getAvailabilityByDate } from "../services/availability";
+import {
+    getAvailabilityByDate,
+    getAvailableSlots,
+} from "../services/availability";
 import { createBooking } from "../services/bookings";
 
 import type {
@@ -15,50 +18,6 @@ import type {
     MassageSummary,
 } from "../types/massage";
 
-// ==============================
-// GENERATE TIME SLOTS
-// ==============================
-
-function generateTimeSlots(
-    startTime: string,
-    endTime: string,
-    duration: number,
-) {
-    if (!startTime || !endTime) {
-        return [];
-    }
-
-    const [startHour, startMinute] =
-        startTime.split(":").map(Number);
-
-    const [endHour, endMinute] =
-        endTime.split(":").map(Number);
-
-    const start =
-        startHour * 60 + startMinute;
-
-    const end =
-        endHour * 60 + endMinute;
-
-    const slots: string[] = [];
-
-    for (
-        let minutes = start;
-        minutes + duration <= end;
-        minutes += 30
-    ) {
-        const hour = Math.floor(minutes / 60);
-        const minute = minutes % 60;
-
-        slots.push(
-            `${String(hour).padStart(2, "0")}:${String(
-                minute,
-            ).padStart(2, "0")}`,
-        );
-    }
-
-    return slots;
-}
 
 function Booking() {
     const [massages, setMassages] =
@@ -157,30 +116,11 @@ function Booking() {
     );
 
     // ==============================
-    // TIME SLOTS
+    // AVAILABLE TIME SLOTS
     // ==============================
 
-    const timeSlots = useMemo(() => {
-        if (
-            !isAvailable ||
-            !availableStart ||
-            !availableEnd ||
-            !duration
-        ) {
-            return [];
-        }
-
-        return generateTimeSlots(
-            availableStart,
-            availableEnd,
-            duration,
-        );
-    }, [
-        isAvailable,
-        availableStart,
-        availableEnd,
-        duration,
-    ]);
+    const [timeSlots, setTimeSlots] =
+        useState<string[]>([]);
 
     // ==============================
     // LOAD SELECTED MASSAGE DETAILS
@@ -266,6 +206,44 @@ function Booking() {
     }, [date]);
 
     // ==============================
+    // LOAD AVAILABLE TIME SLOTS
+    // ==============================
+
+    useEffect(() => {
+        const loadAvailableSlots = async () => {
+            if (
+                !date ||
+                !duration ||
+                !isAvailable
+            ) {
+                setTimeSlots([]);
+                setStartTime("");
+                return;
+            }
+            
+            try {
+                const slots =
+                    await getAvailableSlots(
+                        date,
+                        duration,
+                    );
+                    
+                    setTimeSlots(slots);
+                    setStartTime("");
+                } catch {
+                    setTimeSlots([]);
+                    setStartTime("");
+                    
+                    setError(
+                    "Could not load available times.",
+                    );
+                }
+        };
+
+        loadAvailableSlots();
+    }, [date, duration, isAvailable]);
+
+    // ==============================
     // SUBMIT BOOKING
     // ==============================
 
@@ -319,6 +297,15 @@ function Booking() {
                 });
 
             setMessage(result.message);
+
+            const updatedSlots =
+                await getAvailableSlots(
+                    date,
+                    duration,
+                );
+
+            setTimeSlots(updatedSlots);
+            setStartTime("");
         } catch (err) {
             setError(
                 err instanceof Error
