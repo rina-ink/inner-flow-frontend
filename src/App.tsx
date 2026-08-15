@@ -5,6 +5,7 @@ import {
 
 import Home from "./pages/Home";
 import MassageDetails from "./pages/MassageDetails";
+import Booking from "./pages/Booking";
 // import Massages from "./pages/Massages";
 
 function App() {
@@ -18,6 +19,11 @@ function App() {
       <Route
         path="/massages/:slug"
         element={<MassageDetails />}
+      />
+
+      <Route
+        path="/booking"
+        element={<Booking />}
       />
     </Routes>
   );
