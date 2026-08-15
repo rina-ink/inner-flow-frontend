@@ -1,9 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
+import useScrolled from "../../hooks/useScrolled";
 
 type Theme = "light" | "dark";
 
 function Header() {
+    
+    const isScrolled = useScrolled();
+
     const [theme, setTheme] = useState<Theme>(() => {
         const savedTheme = localStorage.getItem("inner-flow-theme");
         
@@ -22,8 +26,29 @@ function Header() {
     };
 
     return (
-        <header className="fixed inset-x-0 top-0 z-50">
-            <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6 md:px-10">
+        <header
+            className={`
+                fixed inset-x-0 top-0 z-50
+                transition-all duration-500
+                ${
+                    isScrolled
+                        ? "border-b border-current/10 backdrop-blur-md"
+                        : "border-b border-transparent"
+                }
+            `}
+            style={{
+                background: isScrolled
+                    ? "color-mix(in srgb, var(--page-bg) 82%, transparent)"
+                    : "transparent",
+            }}
+        >
+            <div 
+                className={`
+                    mx-auto flex max-w-7xl items-center justify-between
+                    px-6 transition-all duration-500 md:px-10
+                    ${isScrolled ? "py-4" : "py-6"}
+                `}
+            >
                 <Link
                     to="/"
                     className="text-lg font-light tracking-[0.18em]"

@@ -4,6 +4,7 @@ import { Link } from "react-router";
 import { getMassages } from "../../services/massages";
 import type { MassageSummary } from "../../types/massage";
 import ScrollReveal from "../motion/ScrollReveal";
+import MassageFlowBackdrop from "./MassageFlowBackdrop";
 
 function MassagePreview() {
     const [massages, setMassages] = useState<MassageSummary[]>([]);
@@ -27,8 +28,13 @@ function MassagePreview() {
     
     if (isLoading) {
         return (
-            <section className="px-6 py-24 md:px-16">
-                <p style={{ color: "var(--muted-text)" }}>
+            <section className="relative overflow-hidden px-6 py-28 md:px-16">
+                <MassageFlowBackdrop />
+
+                <p 
+                    className="relative z-10"
+                    style={{ color: "var(--muted-text)" }}
+                >
                     Loading massages...
                 </p>
             </section>
@@ -37,8 +43,12 @@ function MassagePreview() {
     
     if (error) {
         return (
-            <section className="px-6 py-24 md:px-16">
-                <p style={{ color: "var(--muted-text)" }}>
+            <section className="relative overflow-hidden px-6 py-28 md:px-16">
+
+                <p
+                    className="relative z-10"
+                    style={{ color: "var(--muted-text)" }}
+                >
                     {error}
                 </p>
             </section>
@@ -46,8 +56,10 @@ function MassagePreview() {
     }
 
     return (
-        <section className="relative px-6 py-28 md:px-16">
-            <div className="mx-auto max-w-6xl">
+        <section className="relative overflow-hidden px-6 py-28 md:px-16">
+            <MassageFlowBackdrop />
+
+            <div className="relative z-10 mx-auto max-w-6xl">
                 <ScrollReveal>
                     <div className="mb-16 max-w-2xl">
                         <p
@@ -57,52 +69,73 @@ function MassagePreview() {
                             massage
                         </p>
 
-                        <h2 className="text-4xl font-light leading-tight md:text-6xl">
+                        <h2 className="text-3xl font-light leading-tight md:text-5xl">
                             Different ways
-                        <br />
-                        into stillness.
+                            <br />
+                            into stillness.
                         </h2>
                     </div>
                 </ScrollReveal>
 
-                <div className="grid gap-12 md:grid-cols-2">
+                <div className="space-y-12 md:space-y-20">
                     {massages.map((massage, index) => (
                         <ScrollReveal
                             key={massage._id}
                             delay={index * 120}
                         >
-                            <article className="group relative min-h-[22rem] overflow-hidden border border-current/10 p-8">
-                                <div className="mb-10 flex min-h-36 items-center justify-center">
+                            <article
+                                className={`
+                                    group relative grid min-h-88 items-center gap-8
+                                    py-12 md:grid-cols-2 md:gap-14
+                                    ${index % 2 !== 0 ? "md:[&>*:first-child]:order-2" : ""}
+                                `}
+                            >
+                                {/* -------------------------
+                                    ILLUSTRATION
+                                ------------------------- */}
+
+                                <div className="relative flex min-h-56 items-center justify-center">
                                     <div
                                         className={`massage-illustration massage-illustration-${massage.illustrationKey}`}
                                         aria-hidden="true"
                                     />
                                 </div>
 
-                                <p
-                                    className="mb-3 text-xs uppercase tracking-[0.3em]"
-                                    style={{ color: "var(--accent)" }}
-                                >
-                                    {String(index + 1).padStart(2, "0")}
-                                </p>
+                                {/* -------------------------
+                                    CONTENT
+                                ------------------------- */}
 
-                                <h3 className="text-3xl font-light">
-                                    {massage.name}
-                                </h3>
+                                <div className="max-w-md">
+                                    <p
+                                        className="mb-4 text-xs uppercase tracking-[0.3em]"
+                                        style={{ color: "var(--accent)" }}
+                                    >
+                                        {String(index + 1).padStart(2, "0")}
+                                    </p>
 
-                                <p
-                                    className="mt-4 max-w-md leading-7"
-                                    style={{ color: "var(--muted-text)" }}
-                                >
-                                    {massage.shortDescription}
-                                </p>
+                                    <h3 className="text-3xl font-light md:text-4xl">
+                                        {massage.name}
+                                    </h3>
 
-                                <Link
-                                    to={`/massages/${massage.slug}`}
-                                    className="mt-8 inline-block text-sm tracking-wide"
-                                >
-                                    explore →
-                                </Link>
+                                    <p
+                                        className="mt-5 leading-7"
+                                        style={{ color: "var(--muted-text)" }}
+                                    >
+                                        {massage.shortDescription}
+                                    </p>
+
+                                    <Link
+                                        to={`/massages/${massage.slug}`}
+                                        className="mt-8 inline-block text-sm tracking-wide transition-opacity duration-300 hover:opacity-50"
+                                    >
+                                        explore →
+                                    </Link>
+                                </div>
+                                <div
+                                    aria-hidden="true"
+                                    className="absolute inset-x-0 bottom-0 h-px opacity-10"
+                                    style={{ background: "var(--page-text)" }}
+                                />
                             </article>
                         </ScrollReveal>
                     ))}

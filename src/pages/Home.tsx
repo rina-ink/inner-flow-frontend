@@ -73,7 +73,7 @@ function Home() {
                                     inner flow
                                 </p>
 
-                                <h2 className="max-w-lg text-4xl font-light leading-tight md:text-6xl">
+                                <h2 className="max-w-lg text-3xl font-light leading-tight md:text-5xl">
                                     Attention.
                                     <br />
                                     Connection.

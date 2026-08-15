@@ -483,3 +483,27 @@ button {
       scaleX(1.05);
   }
 }
+
+
+.massage-flow-backdrop {
+  stroke: var(--accent);
+  stroke-width: 1;
+  stroke-linecap: round;
+
+  opacity: 0.08;
+
+  vector-effect: non-scaling-stroke;
+
+  animation: massage-backdrop-drift 24s ease-in-out infinite;
+}
+
+@keyframes massage-backdrop-drift {
+  0%,
+  100% {
+    transform: translate3d(-8px, 0, 0);
+  }
+
+  50% {
+    transform: translate3d(10px, -6px, 0);
+  }
+}

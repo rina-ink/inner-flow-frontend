@@ -5,6 +5,7 @@ import {
 
 import Home from "./pages/Home";
 import MassageDetails from "./pages/MassageDetails";
+// import Massages from "./pages/Massages";
 
 function App() {
   return (
