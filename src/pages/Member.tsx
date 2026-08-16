@@ -3,18 +3,28 @@ import { useNavigate } from "react-router";
 
 import Header from "../components/layout/Header";
 import ScrollReveal from "../components/motion/ScrollReveal";
+
 import {
     getMe,
     logout,
 } from "../services/auth";
 
+import {
+    cancelBooking,
+    getMyBookings,
+} from "../services/bookings";
+
 import type { User } from "../types/auth";
+import type { MemberBooking } from "../types/booking";
 
 function Member() {
     const navigate = useNavigate();
 
     const [user, setUser] =
         useState<User | null>(null);
+
+    const [bookings, setBookings] =
+        useState<MemberBooking[]>([]);
 
     const [isLoading, setIsLoading] =
         useState(true);
@@ -25,12 +35,22 @@ function Member() {
     const [isLoggingOut, setIsLoggingOut] =
         useState(false);
 
-    useEffect(() => {
-        const loadUser = async () => {
-            try {
-                const data = await getMe();
+    const [
+        cancellingBookingId,
+        setCancellingBookingId,
+    ] = useState<string | null>(null);
 
-                setUser(data);
+    useEffect(() => {
+        const loadMemberData = async () => {
+            try {
+                const [userData, bookingData] =
+                    await Promise.all([
+                        getMe(),
+                        getMyBookings(),
+                    ]);
+
+                setUser(userData);
+                setBookings(bookingData);
             } catch {
                 navigate("/login");
             } finally {
@@ -38,8 +58,36 @@ function Member() {
             }
         };
 
-        loadUser();
+        loadMemberData();
     }, [navigate]);
+
+    const handleCancelBooking = async (
+        bookingId: string,
+    ) => {
+        setError("");
+        setCancellingBookingId(bookingId);
+
+        try {
+            const updatedBooking =
+                await cancelBooking(bookingId);
+
+            setBookings((current) =>
+                current.map((booking) =>
+                    booking._id === updatedBooking._id
+                        ? updatedBooking
+                        : booking,
+                ),
+            );
+        } catch (err) {
+            setError(
+                err instanceof Error
+                    ? err.message
+                    : "Could not cancel booking.",
+            );
+        } finally {
+            setCancellingBookingId(null);
+        }
+    };
 
     const handleLogout = async () => {
         setError("");
@@ -178,15 +226,103 @@ function Member() {
                                     bookings
                                 </p>
 
-                                <p
-                                    style={{
-                                        color:
-                                            "var(--muted-text)",
-                                    }}
-                                >
-                                    Your upcoming and previous
-                                    bookings will appear here.
-                                </p>
+                                {bookings.length === 0 ? (
+                                    <p
+                                        style={{
+                                            color:
+                                                "var(--muted-text)",
+                                        }}
+                                    >
+                                        You don't have any bookings yet.
+                                    </p>
+                                ) : (
+                                    <div className="space-y-8">
+                                        {bookings.map(
+                                            (booking) => (
+                                                <article
+                                                    key={
+                                                        booking._id
+                                                    }
+                                                    className="border-b border-current/10 pb-6 last:border-b-0"
+                                                >
+                                                    <p className="text-lg">
+                                                        {
+                                                            booking
+                                                                .massageId
+                                                                .name
+                                                        }
+                                                    </p>
+
+                                                    <p
+                                                        className="mt-2 text-sm"
+                                                        style={{
+                                                            color:
+                                                                "var(--muted-text)",
+                                                        }}
+                                                    >
+                                                        {new Date(
+                                                            `${booking.date}T00:00:00`,
+                                                        ).toLocaleDateString(
+                                                            "en-GB",
+                                                            {
+                                                                day: "2-digit",
+                                                                month: "long",
+                                                                year: "numeric",
+                                                            },
+                                                        )}
+
+                                                        {" · "}
+
+                                                        {
+                                                            booking.startTime
+                                                        }
+
+                                                        {" · "}
+
+                                                        {
+                                                            booking.duration
+                                                        }{" "}
+                                                        min
+                                                    </p>
+
+                                                    <p
+                                                        className="mt-2 text-xs uppercase tracking-[0.2em]"
+                                                        style={{
+                                                            color:
+                                                                "var(--accent)",
+                                                        }}
+                                                    >
+                                                        {
+                                                            booking.status
+                                                        }
+                                                    </p>
+
+                                                    {booking.status ===
+                                                        "confirmed" && (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() =>
+                                                                handleCancelBooking(
+                                                                    booking._id,
+                                                                )
+                                                            }
+                                                            disabled={
+                                                                cancellingBookingId ===
+                                                                booking._id
+                                                            }
+                                                            className="mt-5 text-sm tracking-wide transition-opacity duration-300 hover:opacity-50 disabled:cursor-not-allowed disabled:opacity-40"
+                                                        >
+                                                            {cancellingBookingId ===
+                                                            booking._id
+                                                                ? "Cancelling..."
+                                                                : "Cancel booking"}
+                                                        </button>
+                                                    )}
+                                                </article>
+                                            ),
+                                        )}
+                                    </div>
+                                )}
                             </section>
                         </ScrollReveal>
                     </div>
