@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router";
 
 import useScrolled from "../../hooks/useScrolled";
+import { getMe } from "../../services/auth";
 
 type Theme = "light" | "dark";
 
@@ -9,6 +10,9 @@ function Header() {
     const isScrolled = useScrolled();
 
     const [isMenuOpen, setIsMenuOpen] =
+        useState(false);
+
+    const [isAuthenticated, setIsAuthenticated] =
         useState(false);
 
     const [theme, setTheme] =
@@ -32,6 +36,20 @@ function Header() {
             theme,
         );
     }, [theme]);
+
+    useEffect(() => {
+        const checkAuthentication = async () => {
+            try {
+                await getMe();
+
+                setIsAuthenticated(true);
+            } catch {
+                setIsAuthenticated(false);
+            }
+        };
+
+        checkAuthentication();
+    }, []);
 
     const toggleTheme = () => {
         setTheme((current) =>
@@ -91,7 +109,13 @@ function Header() {
                         journal
                     </Link>
 
-                    <Link to="/login">
+                    <Link
+                        to={
+                            isAuthenticated
+                                ? "/member"
+                                : "/login"
+                        }
+                    >
                         account
                     </Link>
                 </nav>
@@ -168,7 +192,11 @@ function Header() {
                     </Link>
 
                     <Link
-                        to="/login"
+                        to={
+                            isAuthenticated
+                                ? "/member"
+                                : "/login"
+                        }
                         onClick={closeMenu}
                     >
                         account
