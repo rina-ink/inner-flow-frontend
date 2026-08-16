@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import Header from "../components/layout/Header";
 import ScrollReveal from "../components/motion/ScrollReveal";
+import MusicPreferenceSelector from "../components/preferences/MusicPreferenceSelector";
 
 import {
     getMassageBySlug,
@@ -12,6 +13,7 @@ import {
     getAvailableSlots,
 } from "../services/availability";
 import { createBooking } from "../services/bookings";
+import { getMyMemberProfile } from "../services/member";
 
 import type {
     MassageDetails,
@@ -80,6 +82,39 @@ function Booking() {
 
     const [error, setError] =
         useState("");
+
+    // ==============================
+    // LOAD MEMBER PREFILL
+    // ==============================
+
+    useEffect(() => {
+        const loadMemberPrefill = async () => {
+            try {
+                const member =
+                    await getMyMemberProfile();
+
+                setFirstName(
+                    member.firstName ?? "",
+                );
+
+                setLastName(
+                    member.lastName ?? "",
+                );
+
+                setEmail(member.email);
+
+                setMusicPreference(
+                    member.preferences
+                        .musicPreference ?? "",
+                );
+            } catch {
+                // Guest booking is allowed.
+                // Leave the fields empty.
+            }
+        };
+
+        loadMemberPrefill();
+    }, []);
 
     // ==============================
     // LOAD MASSAGES
@@ -643,19 +678,9 @@ function Booking() {
                         ------------------------- */}
 
                         <section className="space-y-8">
-                            <input
-                                type="text"
-                                placeholder="Music preference (optional)"
-                                value={
-                                    musicPreference
-                                }
-                                onChange={(event) =>
-                                    setMusicPreference(
-                                        event.target
-                                            .value,
-                                    )
-                                }
-                                className="w-full border-b border-current/20 bg-transparent py-3 outline-none"
+                            <MusicPreferenceSelector
+                                value={musicPreference}
+                                onChange={setMusicPreference}
                             />
 
                             <textarea

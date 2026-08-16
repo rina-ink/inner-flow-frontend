@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 
 import Header from "../components/layout/Header";
 import ScrollReveal from "../components/motion/ScrollReveal";
+import MusicPreferenceSelector from "../components/preferences/MusicPreferenceSelector";
 
 import {
     getMe,
@@ -14,8 +15,14 @@ import {
     getMyBookings,
 } from "../services/bookings";
 
+import {
+    getMyMemberProfile,
+    updateMyPreferences,
+} from "../services/member";
+
 import type { User } from "../types/auth";
 import type { MemberBooking } from "../types/booking";
+import type { MemberPreferences } from "../types/member";
 
 function Member() {
     const navigate = useNavigate();
@@ -25,6 +32,12 @@ function Member() {
 
     const [bookings, setBookings] =
         useState<MemberBooking[]>([]);
+
+    const [preferences, setPreferences] =
+        useState<MemberPreferences>({
+            musicPreference: null,
+            quieterSession: false,
+        });
 
     const [isLoading, setIsLoading] =
         useState(true);
@@ -40,17 +53,35 @@ function Member() {
         setCancellingBookingId,
     ] = useState<string | null>(null);
 
+    const [
+        isSavingPreferences,
+        setIsSavingPreferences,
+    ] = useState(false);
+
+    const [
+        preferencesMessage,
+        setPreferencesMessage,
+    ] = useState("");
+
     useEffect(() => {
         const loadMemberData = async () => {
             try {
-                const [userData, bookingData] =
-                    await Promise.all([
-                        getMe(),
-                        getMyBookings(),
-                    ]);
+                const [
+                    userData,
+                    bookingData,
+                    memberProfile,
+                ] = await Promise.all([
+                    getMe(),
+                    getMyBookings(),
+                    getMyMemberProfile(),
+                ]);
 
                 setUser(userData);
                 setBookings(bookingData);
+
+                setPreferences(
+                    memberProfile.preferences,
+                );
             } catch {
                 navigate("/login");
             } finally {
@@ -73,7 +104,8 @@ function Member() {
 
             setBookings((current) =>
                 current.map((booking) =>
-                    booking._id === updatedBooking._id
+                    booking._id ===
+                    updatedBooking._id
                         ? updatedBooking
                         : booking,
                 ),
@@ -86,6 +118,35 @@ function Member() {
             );
         } finally {
             setCancellingBookingId(null);
+        }
+    };
+
+    const handleSavePreferences = async () => {
+        setError("");
+        setPreferencesMessage("");
+        setIsSavingPreferences(true);
+
+        try {
+            const result =
+                await updateMyPreferences(
+                    preferences,
+                );
+
+            setPreferences(
+                result.preferences,
+            );
+
+            setPreferencesMessage(
+                "Preferences saved.",
+            );
+        } catch (err) {
+            setError(
+                err instanceof Error
+                    ? err.message
+                    : "Could not save preferences.",
+            );
+        } finally {
+            setIsSavingPreferences(false);
         }
     };
 
@@ -168,7 +229,8 @@ function Member() {
                             </p>
 
                             <h1 className="text-3xl font-light leading-tight md:text-5xl">
-                                Welcome, {user.firstName}.
+                                Welcome,{" "}
+                                {user.firstName}.
                             </h1>
 
                             <p
@@ -178,8 +240,9 @@ function Member() {
                                         "var(--muted-text)",
                                 }}
                             >
-                                Your bookings and preferences
-                                will live here.
+                                Your bookings and
+                                preferences will live
+                                here.
                             </p>
                         </div>
                     </ScrollReveal>
@@ -233,7 +296,8 @@ function Member() {
                                                 "var(--muted-text)",
                                         }}
                                     >
-                                        You don't have any bookings yet.
+                                        You don't have any
+                                        bookings yet.
                                     </p>
                                 ) : (
                                     <div className="space-y-8">
@@ -327,6 +391,91 @@ function Member() {
                         </ScrollReveal>
                     </div>
 
+                    {/* -------------------------
+                        PREFERENCES
+                    ------------------------- */}
+
+                    <ScrollReveal delay={220}>
+                        <section className="mt-20 border-b border-current/10 pb-12">
+                            <p
+                                className="mb-8 text-xs uppercase tracking-[0.3em]"
+                                style={{
+                                    color:
+                                        "var(--accent)",
+                                }}
+                            >
+                                preferences
+                            </p>
+
+                            <div className="space-y-10">
+                                <MusicPreferenceSelector
+                                    value={
+                                        preferences.musicPreference
+                                    }
+                                    onChange={(value) =>
+                                        setPreferences(
+                                            (current) => ({
+                                                ...current,
+                                                musicPreference:
+                                                    value,
+                                            }),
+                                        )
+                                    }
+                                />
+
+                                <label className="flex cursor-pointer items-start gap-4">
+                                    <input
+                                        type="checkbox"
+                                        checked={
+                                            preferences.quieterSession
+                                        }
+                                        onChange={(event) =>
+                                            setPreferences(
+                                                (current) => ({
+                                                    ...current,
+                                                    quieterSession:
+                                                        event.target
+                                                            .checked,
+                                                }),
+                                            )
+                                        }
+                                        className="mt-1"
+                                    />
+
+                                    <span>
+                                        <span className="block text-sm tracking-wide">
+                                            I prefer a quieter
+                                            session
+                                        </span>
+
+                                        <span
+                                            className="mt-1 block text-sm leading-6"
+                                            style={{
+                                                color:
+                                                    "var(--muted-text)",
+                                            }}
+                                        >
+                                            Less conversation,
+                                            more space to rest.
+                                        </span>
+                                    </span>
+                                </label>
+                            </div>
+                        </section>
+                    </ScrollReveal>
+
+                    {preferencesMessage && (
+                        <p
+                            className="mt-10 text-sm"
+                            style={{
+                                color:
+                                    "var(--accent)",
+                            }}
+                        >
+                            {preferencesMessage}
+                        </p>
+                    )}
+
                     {error && (
                         <p
                             className="mt-10 text-sm"
@@ -339,16 +488,33 @@ function Member() {
                         </p>
                     )}
 
-                    <button
-                        type="button"
-                        onClick={handleLogout}
-                        disabled={isLoggingOut}
-                        className="mt-16 rounded-full border border-current/30 px-8 py-3 text-sm tracking-wide transition-opacity duration-300 hover:opacity-60 disabled:cursor-not-allowed disabled:opacity-40"
-                    >
-                        {isLoggingOut
-                            ? "Signing out..."
-                            : "Sign out"}
-                    </button>
+                    <div className="mt-12 flex flex-wrap gap-4">
+                        <button
+                            type="button"
+                            onClick={
+                                handleSavePreferences
+                            }
+                            disabled={
+                                isSavingPreferences
+                            }
+                            className="rounded-full border border-current/30 px-8 py-3 text-sm tracking-wide transition-opacity duration-300 hover:opacity-60 disabled:cursor-not-allowed disabled:opacity-40"
+                        >
+                            {isSavingPreferences
+                                ? "Saving..."
+                                : "Save preferences"}
+                        </button>
+
+                        <button
+                            type="button"
+                            onClick={handleLogout}
+                            disabled={isLoggingOut}
+                            className="rounded-full border border-current/30 px-8 py-3 text-sm tracking-wide transition-opacity duration-300 hover:opacity-60 disabled:cursor-not-allowed disabled:opacity-40"
+                        >
+                            {isLoggingOut
+                                ? "Signing out..."
+                                : "Sign out"}
+                        </button>
+                    </div>
                 </div>
             </main>
         </>
