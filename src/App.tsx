@@ -9,6 +9,9 @@ import Booking from "./pages/Booking";
 // import Massages from "./pages/Massages";
 import Journal from "./pages/Journal";
 import Article from "./pages/Article";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Member from "./pages/Member";
 
 function App() {
   return (
@@ -36,6 +39,21 @@ function App() {
       <Route
         path="/journal/:slug"
         element={<Article />}
+      />
+
+      <Route
+        path="/login"
+        element={<Login />}
+      />
+
+      <Route
+        path="/register"
+        element={<Register />}
+      />
+
+      <Route
+        path="/member"
+        element={<Member />}
       />
     </Routes>
   );
