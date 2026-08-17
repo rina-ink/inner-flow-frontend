@@ -12,6 +12,7 @@ import Article from "./pages/Article";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Member from "./pages/Member";
+import NotFound from "./pages/NotFound";
 
 function App() {
   return (
@@ -59,6 +60,11 @@ function App() {
       <Route
         path="/member"
         element={<Member />}
+      />
+
+      <Route
+        path="*"
+        element={<NotFound />}
       />
     </Routes>
   );
