@@ -6,7 +6,7 @@ import {
 import Home from "./pages/Home";
 import MassageDetails from "./pages/MassageDetails";
 import Booking from "./pages/Booking";
-// import Massages from "./pages/Massages";
+import Massages from "./pages/Massages";
 import Journal from "./pages/Journal";
 import Article from "./pages/Article";
 import Login from "./pages/Login";
@@ -19,6 +19,11 @@ function App() {
       <Route
         path="/"
         element={<Home />}
+      />
+      
+      <Route
+        path="/massages"
+        element={<Massages />}
       />
 
       <Route

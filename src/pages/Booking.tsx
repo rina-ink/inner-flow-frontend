@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 
+import { useSearchParams } from "react-router";
+
 import Header from "../components/layout/Header";
 import ScrollReveal from "../components/motion/ScrollReveal";
 import MusicPreferenceSelector from "../components/preferences/MusicPreferenceSelector";
@@ -22,6 +24,12 @@ import type {
 
 
 function Booking() {
+    const [searchParams] =
+        useSearchParams();
+
+    const massageFromUrl =
+        searchParams.get("massage");
+    
     const [massages, setMassages] =
         useState<MassageSummary[]>([]);
 
@@ -31,7 +39,7 @@ function Booking() {
     ] = useState<MassageDetails | null>(null);
 
     const [massageId, setMassageId] =
-        useState("");
+        useState(() => massageFromUrl ?? "");
 
     const [duration, setDuration] =
         useState<number | null>(null);
@@ -115,7 +123,7 @@ function Booking() {
 
         loadMemberPrefill();
     }, []);
-
+    
     // ==============================
     // LOAD MASSAGES
     // ==============================
