@@ -83,7 +83,7 @@ function MassageDetails() {
         >
             <div className="mx-auto max-w-6xl">
                 <Link
-                    to="/"
+                    to="/massages"
                     className="text-sm tracking-wide"
                     style={{
                         color: "var(--muted-text)",
@@ -127,22 +127,12 @@ function MassageDetails() {
                             {massage.description}
                         </p>
 
-                        <div className="mt-10 flex gap-10 text-sm">
-                            <span>
-                                {massage.duration} min
-                            </span>
-
-                            <span>
-                                €{massage.price}
-                            </span>
-                        </div>
-
-                        <button
-                            type="button"
+                        <Link
+                            to={`/booking?massage=${massage._id}`}
                             className="mt-12 w-fit border border-current px-7 py-3 text-sm transition-opacity hover:opacity-60"
                         >
                             Book this session
-                        </button>
+                        </Link>
                     </div>
                 </div>
             </div>
