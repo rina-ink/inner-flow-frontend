@@ -81,6 +81,27 @@ button {
 }
 
 /* -------------------------
+    DATE INPUT
+------------------------- */
+
+input[type="date"] {
+  color-scheme: dark;
+}
+
+[data-theme="light"] input[type="date"] {
+  color-scheme: light;
+}
+
+/* -------------------------
+    FORM ACCENTS
+------------------------- */
+
+input[type="checkbox"],
+input[type="radio"] {
+  accent-color: var(--accent);
+}
+
+/* -------------------------
     ACCESSIBILITY
 ------------------------- */
 
