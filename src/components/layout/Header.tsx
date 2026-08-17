@@ -22,9 +22,14 @@ function Header() {
                     "inner-flow-theme",
                 );
 
-            return savedTheme === "dark"
-                ? "dark"
-                : "light";
+            if (
+                savedTheme === "light" ||
+                savedTheme === "dark"
+            ) {
+                return savedTheme;
+            }
+
+            return "dark";
         });
 
     useEffect(() => {

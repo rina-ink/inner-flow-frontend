@@ -1,4 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import {
+    useEffect,
+    useMemo,
+    useState,
+} from "react";
 
 import { useSearchParams } from "react-router";
 
@@ -10,10 +14,12 @@ import {
     getMassageBySlug,
     getMassages,
 } from "../services/massages";
+
 import {
     getAvailabilityByDate,
     getAvailableSlots,
 } from "../services/availability";
+
 import { createBooking } from "../services/bookings";
 import { getMyMemberProfile } from "../services/member";
 
@@ -22,14 +28,13 @@ import type {
     MassageSummary,
 } from "../types/massage";
 
-
 function Booking() {
     const [searchParams] =
         useSearchParams();
 
     const massageFromUrl =
         searchParams.get("massage");
-    
+
     const [massages, setMassages] =
         useState<MassageSummary[]>([]);
 
@@ -40,6 +45,11 @@ function Booking() {
 
     const [massageId, setMassageId] =
         useState(() => massageFromUrl ?? "");
+
+    const [
+        isMassageMenuOpen,
+        setIsMassageMenuOpen,
+    ] = useState(false);
 
     const [duration, setDuration] =
         useState<number | null>(null);
@@ -123,7 +133,7 @@ function Booking() {
 
         loadMemberPrefill();
     }, []);
-    
+
     // ==============================
     // LOAD MASSAGES
     // ==============================
@@ -176,7 +186,9 @@ function Booking() {
                     setSelectedMassageDetails(
                         null,
                     );
+
                     setDuration(null);
+
                     return;
                 }
 
@@ -215,6 +227,7 @@ function Booking() {
                     setAvailableStart("");
                     setAvailableEnd("");
                     setStartTime("");
+
                     return;
                 }
 
@@ -261,26 +274,27 @@ function Booking() {
             ) {
                 setTimeSlots([]);
                 setStartTime("");
+
                 return;
             }
-            
+
             try {
                 const slots =
                     await getAvailableSlots(
                         date,
                         duration,
                     );
-                    
-                    setTimeSlots(slots);
-                    setStartTime("");
-                } catch {
-                    setTimeSlots([]);
-                    setStartTime("");
-                    
-                    setError(
+
+                setTimeSlots(slots);
+                setStartTime("");
+            } catch {
+                setTimeSlots([]);
+                setStartTime("");
+
+                setError(
                     "Could not load available times.",
-                    );
-                }
+                );
+            }
         };
 
         loadAvailableSlots();
@@ -298,10 +312,19 @@ function Booking() {
         setMessage("");
         setError("");
 
+        if (!massageId) {
+            setError(
+                "Please choose a massage.",
+            );
+
+            return;
+        }
+
         if (!duration) {
             setError(
                 "Please choose a duration.",
             );
+
             return;
         }
 
@@ -309,6 +332,7 @@ function Booking() {
             setError(
                 "Please choose a start time.",
             );
+
             return;
         }
 
@@ -405,40 +429,119 @@ function Booking() {
                                 Massage
                             </p>
 
-                            <select
-                                value={massageId}
-                                onChange={(event) => {
-                                    setMassageId(
-                                        event.target.value,
-                                    );
+                            <div className="relative">
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        setIsMassageMenuOpen(
+                                            (current) =>
+                                                !current,
+                                        )
+                                    }
+                                    aria-expanded={
+                                        isMassageMenuOpen
+                                    }
+                                    className="
+                                        flex w-full items-center justify-between
+                                        border-b border-current/20
+                                        bg-transparent py-3 text-left
+                                        transition-opacity duration-300
+                                        hover:opacity-70
+                                    "
+                                >
+                                    <span>
+                                        {selectedMassage
+                                            ? selectedMassage.name
+                                            : "Choose a massage"}
+                                    </span>
 
-                                    setDuration(null);
-                                    setStartTime("");
-                                }}
-                                required
-                                className="w-full border-b border-current/20 bg-transparent py-3 outline-none"
-                            >
-                                <option value="">
-                                    Choose a massage
-                                </option>
+                                    <span
+                                        className={`
+                                            text-xs transition-transform duration-300
+                                            ${
+                                                isMassageMenuOpen
+                                                    ? "rotate-180"
+                                                    : ""
+                                            }
+                                        `}
+                                        style={{
+                                            color:
+                                                "var(--accent)",
+                                        }}
+                                    >
+                                        ↓
+                                    </span>
+                                </button>
 
-                                {massages.map(
-                                    (massage) => (
-                                        <option
-                                            key={
-                                                massage._id
-                                            }
-                                            value={
-                                                massage._id
-                                            }
-                                        >
-                                            {
-                                                massage.name
-                                            }
-                                        </option>
-                                    ),
+                                {isMassageMenuOpen && (
+                                    <div
+                                        className="
+                                            absolute left-0 right-0 top-full z-30
+                                            mt-2 overflow-hidden
+                                            border border-current/10
+                                        "
+                                        style={{
+                                            background:
+                                                "var(--page-bg)",
+                                        }}
+                                    >
+                                        {massages.map(
+                                            (massage) => {
+                                                const isSelected =
+                                                    massage._id ===
+                                                    massageId;
+
+                                                return (
+                                                    <button
+                                                        key={
+                                                            massage._id
+                                                        }
+                                                        type="button"
+                                                        onClick={() => {
+                                                            setMassageId(
+                                                                massage._id,
+                                                            );
+
+                                                            setDuration(
+                                                                null,
+                                                            );
+
+                                                            setStartTime(
+                                                                "",
+                                                            );
+
+                                                            setIsMassageMenuOpen(
+                                                                false,
+                                                            );
+                                                        }}
+                                                        className="
+                                                            block w-full px-4 py-3
+                                                            text-left
+                                                            transition-all duration-300
+                                                            hover:pl-6
+                                                        "
+                                                        style={{
+                                                            background:
+                                                                isSelected
+                                                                    ? "color-mix(in srgb, var(--accent) 18%, transparent)"
+                                                                    : "transparent",
+
+                                                            color:
+                                                                isSelected
+                                                                    ? "var(--accent)"
+                                                                    : "var(--page-text)",
+                                                        }}
+                                                    >
+                                                        {
+                                                            massage.name
+                                                        }
+                                                    </button>
+                                                );
+                                            },
+                                        )}
+                                    </div>
                                 )}
-                            </select>
+                            </div>
                         </section>
 
                         {/* -------------------------
@@ -631,8 +734,7 @@ function Booking() {
                                 value={firstName}
                                 onChange={(event) =>
                                     setFirstName(
-                                        event.target
-                                            .value,
+                                        event.target.value,
                                     )
                                 }
                                 required
@@ -645,8 +747,7 @@ function Booking() {
                                 value={lastName}
                                 onChange={(event) =>
                                     setLastName(
-                                        event.target
-                                            .value,
+                                        event.target.value,
                                     )
                                 }
                                 required
@@ -659,8 +760,7 @@ function Booking() {
                                 value={email}
                                 onChange={(event) =>
                                     setEmail(
-                                        event.target
-                                            .value,
+                                        event.target.value,
                                     )
                                 }
                                 required
@@ -673,8 +773,7 @@ function Booking() {
                                 value={phone}
                                 onChange={(event) =>
                                     setPhone(
-                                        event.target
-                                            .value,
+                                        event.target.value,
                                     )
                                 }
                                 className="border-b border-current/20 bg-transparent py-3 outline-none"
@@ -687,8 +786,12 @@ function Booking() {
 
                         <section className="space-y-8">
                             <MusicPreferenceSelector
-                                value={musicPreference}
-                                onChange={setMusicPreference}
+                                value={
+                                    musicPreference
+                                }
+                                onChange={
+                                    setMusicPreference
+                                }
                             />
 
                             <textarea
@@ -696,8 +799,7 @@ function Booking() {
                                 value={notes}
                                 onChange={(event) =>
                                     setNotes(
-                                        event.target
-                                            .value,
+                                        event.target.value,
                                     )
                                 }
                                 rows={4}
