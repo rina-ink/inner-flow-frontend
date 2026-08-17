@@ -155,7 +155,7 @@ function Article() {
                                         {post.category || "journal"}
                                     </p>
 
-                                    <h1 className="max-w-3xl text-4xl font-light leading-tight md:text-6xl">
+                                    <h1 className="max-w-3xl text-4xl font-light leading-tight md:text-5xl">
                                         {post.title}
                                     </h1>
                                 </div>
@@ -166,7 +166,7 @@ function Article() {
                             </div>
 
                             <p
-                                className="mt-7 max-w-2xl text-lg leading-8"
+                                className="mt-7 max-w-2xl text-base italic leading-7 md:text-lg md:leading-8"
                                 style={{
                                     color:
                                         "var(--muted-text)",
@@ -197,20 +197,49 @@ function Article() {
                             )}
                         </header>
                     </ScrollReveal>
+                    
+                    <div className="max-w-2xl py-16">
+                        <div className="space-y-7">
+                            {post.content
+                                .split("\n\n")
+                                .map((paragraph, index) => {
+                                    const isSectionHeading =
+                                        paragraph ===
+                                            "Space for breath" ||
+                                        paragraph ===
+                                            "Letting go";
 
-                    <ScrollReveal delay={180}>
-                        <div className="max-w-2xl py-16">
-                            <p
-                                className="whitespace-pre-line text-lg leading-9"
-                                style={{
-                                    color:
-                                        "var(--muted-text)",
-                                }}
-                            >
-                                {post.content}
-                            </p>
+                                    if (isSectionHeading) {
+                                        return (
+                                            <h2
+                                                key={index}
+                                                className="pt-8 text-lg font-light tracking-wide md:text-xl"
+                                                style={{
+                                                    color:
+                                                        "var(--page-text)",
+                                                }}
+                                            >
+                                                {paragraph}
+                                            </h2>
+                                        );
+                                    }
+
+                                    return (
+                                        <p
+                                            key={index}
+                                            className="whitespace-pre-line text-base leading-8 md:text-lg md:leading-9"
+                                            style={{
+                                                color:
+                                                    "var(--muted-text)",
+                                            }}
+                                        >
+                                            {paragraph}
+                                        </p>
+                                    );
+                                })
+                            }
                         </div>
-                    </ScrollReveal>
+                    </div>
                 </article>
             </main>
         </>
