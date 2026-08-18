@@ -3,6 +3,8 @@ import { Link, useParams } from "react-router";
 
 import { API_URL } from "../services/api";
 
+import Header from "../components/layout/Header";
+
 type Massage = {
     _id: string;
     name: string;
@@ -25,7 +27,7 @@ function MassageDetails() {
 
     const [error, setError] =
         useState("");
-        
+
     useEffect(() => {
         const loadMassage = async () => {
             try {
@@ -59,84 +61,96 @@ function MassageDetails() {
 
     if (isLoading) {
         return (
-            <main className="min-h-screen px-6 py-32 md:px-16">
-                Loading...
-            </main>
+            <>
+                <Header />
+
+                <main className="min-h-screen px-6 py-32 md:px-16">
+                    Loading...
+                </main>
+            </>
         );
     }
 
     if (error || !massage) {
         return (
-            <main className="min-h-screen px-6 py-32 md:px-16">
-                {error || "Massage not found."}
-            </main>
+            <>
+                <Header />
+
+                <main className="min-h-screen px-6 py-32 md:px-16">
+                    {error || "Massage not found."}
+                </main>
+            </>
         );
     }
 
     return (
-        <main
-            className="relative min-h-screen overflow-hidden px-6 py-32 md:px-16"
-            style={{
-                background: "var(--page-bg)",
-                color: "var(--page-text)",
-            }}
-        >
-            <div className="mx-auto max-w-6xl">
-                <Link
-                    to="/massages"
-                    className="text-sm tracking-wide"
-                    style={{
-                        color: "var(--muted-text)",
-                    }}
-                >
-                    ← massages
-                </Link>
+        <>
+            <Header />
 
-                <div className="mt-20 grid gap-16 md:grid-cols-2">
-                    {/* VISUAL */}
+            <main
+                className="relative min-h-screen overflow-hidden px-6 py-32 md:px-16"
+                style={{
+                    background: "var(--page-bg)",
+                    color: "var(--page-text)",
+                }}
+            >
+                <div className="mx-auto max-w-6xl">
+                    <Link
+                        to="/massages"
+                        className="text-sm tracking-wide"
+                        style={{
+                            color: "var(--muted-text)",
+                        }}
+                    >
+                        ← massages
+                    </Link>
 
-                    <div className="flex min-h-112 items-center justify-center">
-                        <div
-                            className={`massage-illustration massage-illustration-${massage.illustrationKey}`}
-                            aria-hidden="true"
-                        />
-                    </div>
+                    <div className="mt-20 grid gap-12 md:grid-cols-2 md:gap-16">
+                        {/* VISUAL */}
 
-                    {/* CONTENT */}
+                        <div className="flex min-h-88 items-center justify-center md:min-h-112">
+                            <div
+                                className={`massage-illustration massage-illustration-${massage.illustrationKey}`}
+                                aria-hidden="true"
+                            />
+                        </div>
 
-                    <div className="flex flex-col justify-center">
-                        <p
-                            className="mb-5 text-xs uppercase tracking-[0.35em]"
-                            style={{
-                                color: "var(--accent)",
-                            }}
-                        >
-                            massage
-                        </p>
+                        {/* CONTENT */}
 
-                        <h1 className="text-5xl font-light leading-tight md:text-7xl">
-                            {massage.name}
-                        </h1>
+                        <div className="flex flex-col justify-center">
+                            <p
+                                className="mb-5 text-xs uppercase tracking-[0.35em]"
+                                style={{
+                                    color: "var(--accent)",
+                                }}
+                            >
+                                massage
+                            </p>
 
-                        <p
-                            className="mt-8 max-w-lg text-lg leading-8"
-                            style={{
-                                color: "var(--muted-text)",
-                            }}
-                        >
-                            {massage.description}
-                        </p>
+                            <h1 className="text-5xl font-light leading-tight md:text-7xl">
+                                {massage.name}
+                            </h1>
 
-                        <Link
-                            to={`/booking?massage=${massage._id}`}
-                            className="mt-12 w-fit border border-current px-7 py-3 text-sm transition-opacity hover:opacity-60"
-                        >
-                            Book this session
-                        </Link>
+                            <p
+                                className="mt-8 max-w-lg text-lg leading-8"
+                                style={{
+                                    color: "var(--muted-text)",
+                                }}
+                            >
+                                {massage.description}
+                            </p>
+
+                            <Link
+                                to={`/booking?massage=${massage._id}`}
+                                className="mt-12 w-fit border border-current px-7 py-3 text-sm transition-opacity hover:opacity-60"
+                            >
+                                Book this session
+                            </Link>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </main>
+            </main>
+        </>
     );
 }
 

@@ -19,7 +19,7 @@ const steps = [
     },
     {
         title: "Return",
-        description: "Leave lighter. Carry on.",
+        description: "Carry on lighter.",
     },
 ];
 
